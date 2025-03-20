@@ -201,7 +201,7 @@ const TripMap = ({ tripData }) => {
         }
       });
     }
-    import("@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css");
+    // import("@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css");
   }, [tripData]);
 
   
