@@ -1,0 +1,10 @@
+{
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "ignoreBuildStep": [
+      "node_modules/@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css"
+    ]
+  }
+}
