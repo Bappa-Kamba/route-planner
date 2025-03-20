@@ -1,0 +1,17 @@
+diff --git a/node_modules/@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css b/node_modules/@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css
+index 3b9fcc5..e15a82b 100644
+--- a/node_modules/@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css
++++ b/node_modules/@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css
+@@ -12,9 +12,9 @@
+   font:15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+   position:relative;
+   background-color:white;
+-  width:calc(100% - 360px);;
+-  min-width:calc(100% - 40px);;
+-  max-width:calc(100% - 40px);;
++  width:calc(100% - 360px);
++  min-width:calc(100% - 40px);
++  max-width:calc(100% - 40px);
+   margin-left:40px;
+   border-radius:0 0 3px 0;
+   }
