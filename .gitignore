@@ -1,0 +1,16 @@
+backend/mysite/.env
+*/**.pyc
+*/*.pyo
+*/*.pyd
+__pycache__/
+*.egg-info/
+*.egg
+*.log
+*.sqlite3
+*.db
+*.sqlite
+*.db-journal
+*.DS_Store
+*.coverage
+*/node_modules
+*/.env
