@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
-import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import axios from "axios";
 import { MapIcon, Droplet, Clock, Calendar } from "lucide-react";
 
@@ -202,6 +201,7 @@ const TripMap = ({ tripData }) => {
         }
       });
     }
+    import("@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css");
   }, [tripData]);
 
   
