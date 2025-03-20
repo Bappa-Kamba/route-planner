@@ -108,7 +108,8 @@ DATABASES = {
     #     'PORT': env('DB_PORT'),
     # }
     'default': dj_database_url.config(
-      default=env('DB_URL', default="postgres://user:password@host:port/database"),
+      env='DB_URL',  # Set the environment variable DB_URL
+      # default='postgres://user:password@host:port/database',
     )
 }
 
