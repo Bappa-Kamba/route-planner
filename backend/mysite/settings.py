@@ -41,7 +41,7 @@ MAPBOX_API_KEY = env('MAPBOX_API_KEY')
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "https://track-drivers.vercel.app",
+    "https://route-planner-three.vercel.app/",
     "http://localhost:5173",
 ]
 

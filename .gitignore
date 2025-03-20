@@ -14,3 +14,6 @@ __pycache__/
 *.coverage
 */node_modules
 */.env
+
+*/venv
+*/venv/
