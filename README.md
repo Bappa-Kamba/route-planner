@@ -30,6 +30,11 @@ This is a **full-stack trip management system** that allows users to create, tra
 - Mapbox GL JS
 
 ---
+## Deployed endpoints
+- **Frontend:** [`https://route-planner-three.vercel.app`](https://route-planner-three.vercel.app)
+- **Backend:** [`https://route-planner-78f1.onrender.com`](https://route-planner-78f1.onrender.com)
+
+---
 
 ## 🚀 Installation Guide
 
