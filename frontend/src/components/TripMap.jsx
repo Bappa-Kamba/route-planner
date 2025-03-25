@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
-import axios from "axios";
+// import axios from "axios";
 import { MapIcon, Droplet, Clock, Calendar } from "lucide-react";
+import { ComplianceCard, CycleMeter } from "./ComplianceCard";
 
 const MAPBOX_API_KEY = import.meta.env.VITE_APP_MAPBOX_API_KEY;
 mapboxgl.accessToken = MAPBOX_API_KEY;
@@ -42,6 +43,41 @@ const TripMap = ({ tripData }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
 
+  // In TripMap.jsx
+  const addStopMarkers = (coordinates, label, color) => {
+    if (!map.current || !coordinates) return;
+
+    // Create marker element
+    const el = document.createElement('div');
+    el.className = 'marker cursor-pointer';
+    el.innerHTML = `
+      <div class="relative">
+        <div class="w-5 h-5 bg-${color}-500 rounded-full border-2 border-white shadow-lg"></div>
+      </div>
+    `;
+
+    // Create popup content
+    // const stopLabel = `${icon ? `<img src="https://unpkg.com/@mapbox/maki@7.0.0/icons/${icon}.svg" 
+    //                               class="w-6 h-6" alt="${icon}">` : ''}
+    //                               ${}`;
+    const popup = new mapboxgl.Popup({ offset: 25 }).setText(label);
+      // .setHTML(`
+      //   <div class="flex items-center gap-2">
+      //     ${icon ? `<img src="https://unpkg.com/@mapbox/maki@7.0.0/icons/${icon}.svg" 
+      //                 class="w-6 h-6" alt="${icon}">` : ''}
+      //     <div>
+      //       <p class="text-xs text-gray-600">${label}</p>
+      //     </div>
+      //   </div>
+      // `);
+
+    // Add marker to map
+    new mapboxgl.Marker(el)
+      .setLngLat(coordinates)
+      .setPopup(popup)
+      .addTo(map.current);
+  };
+
   useEffect(() => {
     if (!mapContainer.current || !tripData || !tripData.trip) return;
     
@@ -79,38 +115,47 @@ const TripMap = ({ tripData }) => {
       restStops: []
     };
 
-    const geocodeLocation = async (address, type, index) => {
-      try {
-        const response = await axios.get(
-          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_API_KEY}`
-        );
-        const feature = response.data.features[0];
-        if (feature) {
-          return feature.center;
-        }
-      } catch (error) {
-        console.error(`Geocoding error for ${type} ${index + 1}:`, error);
-      }
-      return null;
-    };
+    // const geocodeLocation = async (address, type, index) => {
+    //   try {
+    //     const response = await axios.get(
+    //       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_API_KEY}`
+    //     );
+    //     const feature = response.data.features[0];
+    //     if (feature) {
+    //       return feature.center;
+    //     }
+    //   } catch (error) {
+    //     console.error(`Geocoding error for ${type} ${index + 1}:`, error);
+    //   }
+    //   return null;
+    // };
 
     const loadGeocodedStops = async () => {
-      const fuelStopCoords = await Promise.all(
-        (tripData.stops?.fuel_stop_locations || []).map((loc, index) => 
-          geocodeLocation(loc, "Fuel Stop", index)
-        )
-      );
-      
-      const restStopCoords = await Promise.all(
-        (tripData.stops?.rest_stop_locations || []).map((loc, index) => 
-          geocodeLocation(loc, "Rest Stop", index)
-        )
-      );
+      try {
+        // Process fuel stops from backend data
+        const fuelStops = tripData.stops?.fuel_stop_locations || [];
+        const restStops = tripData.stops?.rest_stop_locations || [];
 
-      coordinates.fuelStops = fuelStopCoords.filter(Boolean);
-      coordinates.restStops = restStopCoords.filter(Boolean);
-      
-      placeMarkers();
+        // Convert string coordinates to arrays
+        coordinates.fuelStops = fuelStops.map(stop => {
+          const coords = stop.coords;
+          return {
+          ...stop,
+          coords
+        }});
+
+        coordinates.restStops = restStops.map(stop => ({
+          ...stop,
+          coords: stop.coords
+        }));
+
+        console.log("Processed Fuel Stops:", coordinates.fuelStops);
+        console.log("Processed Rest Stops:", coordinates.restStops);
+        
+        placeMarkers();
+      } catch (error) {
+        console.error("Error processing stops:", error);
+      }
     };
 
     if (!map.current) {
@@ -143,8 +188,8 @@ const TripMap = ({ tripData }) => {
       directions.on('load', () => {
         const directionsContainer = document.querySelector('.mapbox-directions-component');
         if (directionsContainer) {
-          directionsContainer.style.transform = 'scale(1.25)';
-          directionsContainer.style.marginTop = '60px';
+          directionsContainer.style.transform = 'scale(0.75)';
+          directionsContainer.style.marginTop = '30px';
         }
       });
 
@@ -165,17 +210,43 @@ const TripMap = ({ tripData }) => {
       }
     };
 
+    // Update placeMarkers function
     const placeMarkers = () => {
-      addMarker(coordinates.start, "Start Location", "blue");
-      addMarker(coordinates.pickup, "Pickup Point", "orange");
-      addMarker(coordinates.dropoff, "Drop-off Point", "green");
+      // Clear existing markers
+      const markers = document.getElementsByClassName('mapboxgl-marker');
+      while(markers.length > 0) {
+        markers[0].remove();
+      }
 
-      coordinates.fuelStops.forEach((coord, index) => {
-        addMarker(coord, `⛽ Fuel Stop ${index + 1}`, "yellow");
+      // Add main markers
+      addMarker(coordinates.start, "🚚 Start Location", "blue");
+      addMarker(coordinates.pickup, "📦 Pickup Location", "orange");
+      addMarker(coordinates.dropoff, "🏁 Drop-off Location", "green");
+
+      // Add fuel stops
+      coordinates.fuelStops.forEach((stop, index) => {
+        if (stop.coords && stop.coords.length === 2) {
+          addStopMarkers(
+            stop.coords,
+            `⛽ ${stop.name || `Fuel Stop ${index + 1}`}`,
+            "yellow",
+            stop.icon || 'fuel',
+            stop.name || 'Fuel Station'
+          );
+        }
       });
 
-      coordinates.restStops.forEach((coord, index) => {
-        addMarker(coord, `🛑 Rest Stop ${index + 1}`, "red");
+      // Add rest stops
+      coordinates.restStops.forEach((stop, index) => {
+        if (stop.coords && stop.coords.length === 2) {
+          addStopMarkers(
+            stop.coords,
+            `🛑 ${stop.name || `Rest Stop ${index + 1}`}`,
+            "red",
+            stop.icon || 'lodging',
+            stop.name || 'Rest Area'
+          );
+        }
       });
     };
 
@@ -210,17 +281,18 @@ const TripMap = ({ tripData }) => {
   return (
     <div className="mt-6 space-y-6">
       {/* Map Container */}
-      <div className="relative w-full h-[50vh] md:h-[70vh] rounded-xl shadow-lg 
-        overflow-hidden border border-gray-200 bg-gray-50">
+      <div className="relative w-full h-[50vh] md:h-[70vh] rounded-xl 
+              shadow-xl border-2 border-gray-200 bg-gray-50 
+              overflow-hidden">
         <div ref={mapContainer} className="w-full h-full" />
         <MapLegend />
       </div>
 
       {/* Consolidated Trip Summary */}
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-        <div className="p-0.5 bg-gradient-to-r from-blue-600 to-blue-700"></div>
-        <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+        <div className="p-0.5 bg-gradient-to-r from-primary to-blue-700"></div>
+        <div className="p-6 space-y-6">
+          <h3 className="text-xl font-medium text-gray-700 mb-6 flex items-center">
             <MapIcon className="h-5 w-5 mr-2 text-blue-600" />
             Trip Summary
           </h3>
@@ -235,6 +307,12 @@ const TripMap = ({ tripData }) => {
                 { label: "Estimated Duration", value: tripData.route_info?.duration }
               ]}
             />
+
+            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+              <CycleMeter remaining={tripData.trip?.cycle_hours_remaining} />
+            </div>
+
+            <ComplianceCard violations={tripData.trip?.violations || []} />
             
             <SummaryCard 
               icon={<Droplet className="h-5 w-5 mr-2 text-yellow-600" />}
@@ -252,7 +330,8 @@ const TripMap = ({ tripData }) => {
                 { label: "Mandatory Rest Periods", value: tripData.stops?.rest_stops || 0 },
                 { label: "Next Rest Deadline", value: tripData.stops?.next_rest_deadline }
               ]}
-            />
+            /> 
+
           </div>
               
           

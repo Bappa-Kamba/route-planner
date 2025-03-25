@@ -1,5 +1,4 @@
 from django.db import models
-import uuid
 
 
 class Trip(models.Model):
@@ -7,6 +6,10 @@ class Trip(models.Model):
     pickup_location = models.CharField(max_length=255)
     dropoff_location = models.CharField(max_length=255)
     cycle_hours = models.IntegerField()
+    sleeper_berth_hours = models.FloatField(default=0)
+    cycle_start_date = models.DateField(auto_now_add=True)
+    cycle_hours_remaining = models.DecimalField(max_digits=4, decimal_places=1, default=70)
+    violations = models.JSONField(default=list)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

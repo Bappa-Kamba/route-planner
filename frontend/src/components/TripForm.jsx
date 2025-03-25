@@ -58,13 +58,13 @@ const TripForm = () => {
           <div className="bg-blue-600 p-4 text-white">
             <div className="flex items-center space-x-3">
               <TruckIcon className="h-6 w-6" />
-              <h1 className="text-2xl font-bold tracking-tight">Route Planner Pro</h1>
+              <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">Route Planner Pro</h1>
             </div>
             <p className="mt-1 text-blue-100 font-light text-sm">Plan your journey with optimal stops and efficient routing</p>
           </div>
 
           {/* Enhanced Progress Steps */}
-          <div className="px-6 pt-4">
+          <div className="px-6 pt-4 border-b border-gray-200 pb-6">
             <div className="flex flex-col items-center mb-6">
               <div className="w-full flex items-center relative">
                 {steps.map((step, index) => (
@@ -109,23 +109,19 @@ const TripForm = () => {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid md:grid-cols-2 gap-5">
                 {/* Current Location */}
-                <div className="col-span-2 md:col-span-1 relative">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="mt-1 relative">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Current Location
-                    <span className="text-gray-500 text-xs ml-1">(Nearest major city)</span>
                   </label>
-                  <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <div className="bg-blue-100 rounded-full p-1">
-                        <MapPinIcon className="h-4 w-4 text-blue-400" />
-                      </div>
-                    </div>
-                    <LocationSearch 
+                  <div className="relative">
+                    <LocationSearch
                       onSelect={(value) => handleLocationSelect("current_location", value)}
                       placeholder="Enter your current location"
-                      className="block w-full pl-10 pr-12 py-2 text-sm border border-gray-300 rounded-lg 
-                        focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ring-offset-1"
+                      className="w-full pl-10 pr-4 py-3 text-base text-gray-700 bg-gray-50 rounded-lg 
+                                border border-gray-300 focus:ring-2 focus:ring-primary 
+                                focus:border-primary placeholder-gray-500"
                     />
+                    <MapPinIcon className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
                   </div>
                 </div>
 
@@ -199,11 +195,7 @@ const TripForm = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full md:w-auto flex items-center justify-center px-6 py-3 
-                    border border-transparent rounded-lg shadow-sm text-base font-medium text-white 
-                    bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
-                    transition-all duration-150 transform hover:scale-105 focus:outline-none focus:ring-2 
-                    focus:ring-blue-500 focus:ring-offset-2"
+                  className="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg"
                 >
                   {loading ? (
                     <div className="flex items-center">
